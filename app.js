@@ -1,3 +1,4 @@
+require('dotenv').config()
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -67,10 +68,11 @@ connection.beginTransaction(function(err) {
 // Rather than creating and managing connections one-by-one, this module also provides built-in connection pooling
 var pool = mysql.createPool({
     connectionLimit: 10,
-    user: 'root', // username for MySql server
-    password: '', // password
-    port: '3306', // port number
-    database: 'MySQLTransactionDB', // Database name
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER, // username for MySql server
+    password: process.env.DB_PASS, // password
+    port: process.env.DB_PORT, // port number
+    database: process.env.DB_NAME, // Database name
     multipleStatements: true, // Allow multiple mysql statements per query. Be careful with this, it could increase the scope of SQL injection attacks
 });
 
@@ -92,7 +94,7 @@ pool.getConnection(function(err, connection) {
                     //Failure
                 });
             }
-            var q1 = connection.query('Select * from names11', function(err) {
+            var q1 = connection.query('Select * from names', function(err) {
                 if (err) { //Query Error (Rollback and release connection)
                     console.log('error 1', err)
                 }
